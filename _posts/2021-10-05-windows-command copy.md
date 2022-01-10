@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Windows Command Reference For Pentest"
+title:  "Parameter Cheat Sheet"
 date:   2021-10-05 22:03:38 +0830
 categories: Windows PrivEsc Exploit Cheatsheet
 description: A place for me to store my notes/tricks for Windows Based Systems.
