@@ -1,0 +1,48 @@
+title: nandanG~Sec
+author: nandangpy
+email: contact.nandang@gmail.com
+description: > # this means to ignore newlines until "show_exerpts:"
+ Pentest, Hacking & CTF
+show_excerpts: true
+
+sass:
+  sass_dir: _sass
+permalink: /:year/:month/:day/:title 
+plainwhite:
+  name: nandangpy
+  tagline: Web Developer | Penetration Tester
+  date_format: "%b %-d, %Y"
+  sitemap: true # set to true to generate sitemap.xml content
+  # search: true # set to true to enable searchbar
+  dark_mode: true # set to true to add dark mode toggle
+  portfolio_image: "assets/pp.png" # the path from the base directory of the site to the image to display (no / at the start)
+  html_lang: "en" # set the lang attribute of the <html> tag for the pages.
+  condensed_mobile:
+    #- home
+    - page
+    - post
+  # generate sosmed
+  social_links:
+    twitter: gakpunyatwitter
+    github:  nandangpy
+    linkedIn: in/nandang-prayogi
+    instagram: nandang.py
+    rss: /feed.xml
+
+    # Mastodon instances
+    # mastodon:
+    # - username: jekyll
+    #   instance: example.com
+    # - username: jekyll2
+    #   instance: example.com
+#header_pages:
+# - about.md
+
+# Build set
+theme: plainwhite
+plugins:
+  - jekyll-seo-tag
+  - jekyll-feed
+domain: nandangpy.github.io       # if you want to force HTTPS, specify the domain without the http at the start, e.g. example.com
+url: https://nandangpy.github.io  # the base hostname and protocol for your site, e.g. http://example.com
+baseurl: /nandangpy.github.io/
