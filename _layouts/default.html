@@ -77,7 +77,7 @@
       </nav>
       {%- endif -%}
       <p class="about-footer {{condensed_class}}">&copy;
-        {{ Date.current.year }}</p>
+        {{ date.strftime('%Y') }}</p>
       {%- if site.plainwhite.dark_mode -%}
       <div class="about-footer {{condensed_class}}">
         <hr>
