@@ -1,16 +1,16 @@
 title: nandanG~Sec
-author: nandangpy
+author: nandang
 email: contact.nandang@gmail.com
 description: > # this means to ignore newlines until "show_exerpts:"
- Pentest, Hacking & CTF
+ Web Security, Penetration testing, Hacking & CTF.
 show_excerpts: true
 
 sass:
   sass_dir: _sass
 permalink: /:year/:month/:day/:title 
 plainwhite:
-  name: nandangpy
-  tagline: Web Developer | Penetration Tester
+  name: nandang
+  tagline: Web Developer | Security Engineer
   date_format: "%b %-d, %Y"
   sitemap: true # set to true to generate sitemap.xml content
   # search: true # set to true to enable searchbar
