@@ -1,168 +1,63 @@
 ---
 layout: post
-title:  "Parameter Top"
-date:   2022-01-05 22:02:38 +0830
-categories: Cheatsheet Bug-Hunter
-description: Some top parameters that are often used to search for vulnerabilities.
-thumbnail: https://www.kali.org/images/kali-everywhere-vm.svg
+title: "Laravel Best Practice"
+date: 2023-11-7 21:50:00 +0540
+categories: Code Laravel Pentest
+description: Laravel offers flexibility in structuring projects—both a strength and a challenge. Since the official documentation doesn’t provide specific guidelines, let’s explore various options using a specific example.
+thumbnail: https://laravel.com/img/logomark.min.svg
 ---
 
-Parameters with the type of vulnerability that often occurs.
+One of the common questions about Laravel is, 'How should I structure my project?' More specifically, 'If logic doesn’t belong in the Controller, where should it go?'
 
-# Table of Contents:
-   - <a href="#SQLi">SQL Injection (SQLi)</a>
-   - <a href="#remote-code-execution">Remote Code Execution (RCE)</a>
-   - <a href="#local-file-inclusion">Local File Inclusion (LFI)</a>
-   - <a href="#cross-site-scripting">Cross Site Scripting (XSS)</a>
-   - <a href="#server-side-request-forgery">Server Side Request Forgery (SSRF)</a>
+There’s no single answer. Laravel offers flexibility in structuring projects—both a strength and a challenge. Since the official documentation doesn’t provide specific guidelines, let’s explore various options using a specific example.
 
+Note: Because there’s no one-size-fits-all method, this article will include many 'what ifs' and exceptions. It’s recommended to read it fully to understand the best practices that suit your needs.
 
-## [](#header-2)SQL Injection
+Imagine you have a Controller method for user registration that handles multiple tasks:
 
-```powershell
-?id={payload}
-?page={payload}
-?dir={payload}
-?search={payload}
-?category={payload}
-?calss={payload}
-?file={payload}
-?url={payload}
-?news={payload}
-?item={payload}
-?menu={payload}
-?lang={payload}
-?name={payload}
-?ref={payload}
-?title={payload}
-?view={payload}
-?topic={payload}
-?thread={payload}
-?type={payload}
-?date={payload}
-?form={payload}
-?join={payload}
-?main={payload}
-?nav={payload}
-?region={payload}
-```
+```php
+public function store(Request $request)
+{
+    // 1. Validation
+    $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        'password' => ['required', 'confirmed', Rules\Password::defaults()],
+    ]);
 
-## [](#header-2)Remote Code Execution
+    // 2. Create user
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+    ]);
 
-```powershell
-?cmd={payload}
-?exec={payload}
-?command={payload}
-?execute={payload}
-?ping={payload}
-?query={payload}
-?jump={payload}
-?code={payload}
-?reg={payload}
-?do={payload}
-?func={payload}
-?arg={payload}
-?option={payload}
-?load={payload}
-?process={payload}
-?step={payload}
-?read={payload}
-?function={payload}
-?req={payload}
-?feature={payload}
-?exe={payload}
-?module={payload}
-?payload={payload}
-?run={payload}
-?print={payload}
-```
+    // 3. Upload the avatar file and update the user
+    if ($request->hasFile('avatar')) {
+        $avatar = $request->file('avatar')->store('avatars');
+        $user->update(['avatar' => $avatar]);
+    }
 
-## [](#header-2)Local File Inclusion
+    // 4. Login
+    Auth::login($user);
 
-```powershell
-?cat={payload}
-?dir={payload}
-?action={payload}
-?board={payload}
-?date={payload}
-?detail={payload}
-?file={payload}
-?download={payload}
-?path={payload}
-?folder={payload}
-?prefix={payload}
-?include={payload}
-?page={payload}
-?inc={payload}
-?locate={payload}
-?show={payload}
-?doc={payload}
-?site={payload}
-?type={payload}
-?view={payload}
-?content={payload}
-?document={payload}
-?layout={payload}
-?mod={payload}
-?conf={payload}
-```
+    // 5. Generate a personal voucher
+    $voucher = Voucher::create([
+        'code' => Str::random(8),
+        'discount_percent' => 10,
+        'user_id' => $user->id
+    ]);
 
-## [](#header-2)Cross Site Scripting
+    // 6. Send that voucher with a welcome email
+    $user->notify(new NewUserWelcomeNotification($voucher->code));
 
-```powershell
-?q={payload}
-?s={payload}
-?search={payload}
-?id={payload}
-?lang={payload}
-?keyword={payload}
-?query={payload}
-?page={payload}
-?keywords={payload}
-?year={payload}
-?view={payload}
-?email={payload}
-?type={payload}
-?name={payload}
-?p={payload}
-?moth={payload}
-?imagine={payload}
-?list_type={payload}
-?url={payload}
-?term={payload}
-?categoryid={payload}
-?key={payload}
-?l={payload}
-?begindate={payload}
-?enddate={payload}
-```
+    // 7. Notify administrators about the new user
+    foreach (config('app.admin_emails') as $adminEmail) {
+        Notification::route('mail', $adminEmail)
+            ->notify(new NewUserAdminNotification($user));
+    }
 
-## [](#header-2)Server Side Request Forgery
+    return redirect()->route('dashboard');
+}
 
-```powershell
-?dest={target}
-?redirect={target}
-?uri={target}
-?path={target}
-?continue={target}
-?url={target}
-?window={target}
-?next={target}
-?data={target}
-?reference={target}
-?site={target}
-?html={target}
-?val={target}
-?validate={target}
-?domain={target}
-?callback={target}
-?return={target}
-?page={target}
-?feed={target}
-?host={target}
-?port={target}
-?to={target}
-?out={target}
-?view={target}
-?dir={target}
 ```
