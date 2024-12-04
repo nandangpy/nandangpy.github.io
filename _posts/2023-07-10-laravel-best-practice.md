@@ -146,3 +146,134 @@ Finally, in our Controller method, we replace Request $request with StoreUserReq
 Ok, the first shortening of the controller is done. Let's move on.
 
 ## [](#header-2)Create User: Service Class
+
+Next, we need to create a user and upload the avatar for them:
+
+```php
+    // Create user
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+    ]);
+
+    // Avatar upload and update user
+    if ($request->hasFile('avatar')) {
+        $avatar = $request->file('avatar')->store('avatars');
+        $user->update(['avatar' => $avatar]);
+    }
+```
+
+If we follow the recommendations, that logic should not be in a Controller. Controllers shouldn't know anything about the DB structure of the user, or where to store the avatars. It just needs to call some class method that would take care of everything.
+
+A pretty common place to put such logic is to create a separate PHP Class around one Model's operations. It is called a Service class, but that's just a "fancy" official name for a PHP class that "provides a service" for the Controller.
+
+That's why there's no command like php artisan make:service because it's just a PHP class, with whatever structure you want, so you can create it manually within your IDE, in whatever folder you want.
+
+Typically, Services are created when there are more than one method around the same entity or model. So, by creating a UserService here, we assume there will be more methods here in the future, not just to create the user.
+
+Also, Services typically have methods that return something (so, "provides the service"). In comparison, Actions or Jobs are called typically without expecting anything back.
+
+In my case, I will create the app/Services/UserService.php class, with one method, for now.
+
+```php
+    namespace App\Services;
+
+    use App\Models\User;
+    use Illuminate\Http\Request;
+    use Illuminate\Support\Facades\Hash;
+
+    class UserService
+    {
+        public function createUser(Request $request): User
+        {
+            // Create user
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+
+            // Avatar upload and update user
+            if ($request->hasFile('avatar')) {
+                $avatar = $request->file('avatar')->store('avatars');
+                $user->update(['avatar' => $avatar]);
+            }
+
+            return $user;
+        }
+    }
+```
+
+Then, in the Controller, we can just type-hint this Service class as a parameter of the method, and call the method inside.
+
+```php
+use App\Services\UserService;
+
+    class RegisteredUserController extends Controller
+    {
+        public function store(StoreUserRequest $request, UserService $userService)
+        {
+            $user = $userService->createUser($request);
+
+            // Login and other operations...
+```
+
+Yes, we don't need to call new UserService() anywhere. Laravel allows you to type-hint any class like this in the Controllers, you can read more about Method Injection here in the docs.
+
+### [](#header-3) Service Class with Single Responsibility Principle
+
+Now, the Controller is much shorter, but this simple copy-paste separation of code is a bit problematic.
+
+The first problem is that the Service method should act like a "black box" that just accepts the parameters and doesn't know where those come from. So this method would be possible to be called from a Controller, from Artisan command, or a Job, in the future.
+
+Another problem is that the Service method violates the Single Responsibility principle: it creates the user and uploads the file.
+
+So, we need two more "layers": one for file upload, and one for the transformation from the $request to the parameters for the function. And, as always, there are various ways to implement it.
+
+In my case, I will create a second service method that will upload the file.
+
+app/Services/UserService.php:
+
+```php
+class UserService
+{
+    public function uploadAvatar(Request $request): ?string
+    {
+        return ($request->hasFile('avatar'))
+            ? $request->file('avatar')->store('avatars')
+            : NULL;
+    }
+
+    public function createUser(array $userData): User
+    {
+        return User::create([
+            'name' => $userData['name'],
+            'email' => $userData['email'],
+            'password' => Hash::make($userData['password']),
+            'avatar' => $userData['avatar']
+        ]);
+    }
+}
+```
+
+RegisteredUserController.php:
+
+```php
+public function store(StoreUserRequest $request, UserService $userService)
+{
+    $avatar = $userService->uploadAvatar($request);
+    $user = $userService->createUser($request->validated() + ['avatar' => $avatar]);
+
+    // ...
+```
+
+Again, I will repeat: it's only one way of separating the things, you may do it differently.
+
+But my logic is this:
+
+1. The method createUser() now doesn't know anything about the Request, and we may call it from any Artisan command or elsewhere
+2. The avatar upload is separated from the user creation operation.
+   You may think that the Service methods are too small to separate them, but this is a very simplified example: in real-life projects, the file upload method may be much more complex, as well as the User creation logic.
+
+In this case, we moved away a bit from the sacred rule "make a controller shorter" and added the second line of code, but for the right reasons, in my opinion.
