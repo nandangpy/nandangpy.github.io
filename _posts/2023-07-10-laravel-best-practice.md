@@ -77,7 +77,7 @@ With that, I probably could even end the article right now. But you probably wan
 
 # General Refactoring Strategy
 
-First, a "disclaimer", so it would be clear what we're doing here, and why. Our general goal is to make the Controller method shorter, so it wouldn't contain any logic.
+First, a **"disclaimer"**, so it would be clear what we're doing here, and why. Our general goal is to make the Controller method shorter, so it wouldn't contain any logic.
 
 Controller methods need to do three things:
 
@@ -233,7 +233,7 @@ So, we need two more "layers": one for file upload, and one for the transformati
 
 In my case, I will create a second service method that will upload the file.
 
-app/Services/UserService.php:
+#### app/Services/UserService.php:
 
 ```php
 class UserService
@@ -257,7 +257,7 @@ class UserService
 }
 ```
 
-RegisteredUserController.php:
+#### RegisteredUserController.php:
 
 ```php
 public function store(StoreUserRequest $request, UserService $userService)
@@ -318,7 +318,7 @@ class CreateNewUser
 }
 ```
 
-You are free to choose the method name for the Action class, I like handle().
+You are free to choose the method name for the Action class, I like **handle()**.
 
 RegisteredUserController:
 
@@ -354,7 +354,7 @@ But with Voucher, in this case, the Controller contains the logic of how the vou
 
 First, we need to move the voucher creation to a separate class: I'm hesitating between creating a VoucherService and putting it as a method within the same UserService. That's almost a philosophical debate: what this method is related to the vouchers system, the users' system, or both?
 
-Since one of the features of Services is to contain multiple methods, I decided to not create a "lonely" VoucherService with one method. We'll do it in the UserService:
+Since one of the features of Services is to contain multiple methods, I decided to not create a **"lonely"** VoucherService with one method. We'll do it in the UserService:
 
 ```php
     use App\Models\Voucher;
@@ -487,7 +487,7 @@ So, now, we've moved all the logic from the Controller to elsewhere, and let's r
 
 Shorter, separated into various files, and still readable, right? Again, will repeat once more, that it's only one way to accomplish this mission, you can decide to structure it in another way.
 
-But that's not all. Let's also discuss the "passive" way.
+But that's not all. Let's also discuss the **"passive"** way.
 
 ## [](header-2) Events/Listeners
 
@@ -575,7 +575,7 @@ class NewUserNotifyAdminsListener
 }
 ```
 
-What is the advantage of this approach, with events and listeners? They are used like "hooks" in the code, and anyone else in the future would be able to use that hook. In other words, you're saying to the future developers: "Hey, the user is registered, the event happened, and now if you want to add some other operation happening here, just create your listener for it".
+What is the advantage of this approach, with events and listeners? They are used like **"hooks"** in the code, and anyone else in the future would be able to use that hook. In other words, you're saying to the future developers: "Hey, the user is registered, the event happened, and now if you want to add some other operation happening here, just create your listener for it".
 
 ## [](header-2) Observers: "Silent" Events/Listeners
 
@@ -611,14 +611,11 @@ In that case, you don't need to dispatch any events in the Controller, the Obser
 
 Convenient, right?
 
-But, in my personal opinion, this is a bit dangerous pattern. Not only the implementation logic is hidden from the Controller, but the mere existence of those operations is not clear. Imagine a new developer joining the team in a year, would they check all the possible observer methods when maintaining the User registration?
-
-Of course, it's possible to figure it out, but still, it's not obvious. And our goal is to make the code more maintainable, so the fewer "surprises", the better. So, I'm not a big fan of Observers.
+But, in my personal opinion, this is a bit dangerous pattern. Not only the implementation logic is hidden from the Controller, but the mere existence of those operations is not clear. Imagine a new developer joining the team in a year, would they check all the possible observer methods when maintaining the User registration? Of course, it's possible to figure it out, but still, it's not obvious. And our goal is to make the code more maintainable, so the fewer **"surprises"**, the better. So, I'm not a big fan of Observers.
 
 ## Conclusion
 
 Looking at this article now, I realize I've only scratched the surface of possible separations of the code, on a very simple example.
-
 In fact, in this simple example, it may seem that we made the application more complex, creating many more PHP classes instead of just one.
 
 But, in this example, those separate code parts are short. In real life, they may be much more complex, and by separating them, we made them more manageable, so every part may be handled by a separate developer, for example.
