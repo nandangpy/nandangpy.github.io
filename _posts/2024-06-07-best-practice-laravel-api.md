@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "Laravel REST API Best Practices"
-date: 2024-15-7 18:50:00 +0540
+title: "Best Practice Laravel REST API"
+date: 2024-06-07 18:50:00 +0540
 categories: API Code Laravel
 description: Building a RESTful API CRUD application in Laravel following best practices involves several key steps.
-thumbnail: https://laravel.com/img/logomark.min.svg
+thumbnail: https://laracasts.com/images/topics/icons/laravel-logo.svg
 ---
 
 Building a RESTful API CRUD application in Laravel following best practices involves several key steps. This includes setting up the Laravel application, defining routes, implementing validation, working with models, utilizing resources, creating controllers, applying the Repository design pattern, and integrating models with the database. Here is a step-by-step guide to achieving this:
