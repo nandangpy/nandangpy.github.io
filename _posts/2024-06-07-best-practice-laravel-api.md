@@ -1,17 +1,8 @@
 ---
 layout: post
-title: "Parameter Top"
-date: 2024-07-15 18:50:00 +0540
-categories: API Code Laravel
-description: Building a RESTful API CRUD application in Laravel following best practices involves several key steps.
-thumbnail: https://laravel.com/img/logomark.min.svg
----
-
----
-layout: post
 title: "Laravel REST API Best Practices"
 date: 2024-15-7 18:50:00 +0540
-categories: Code Laravel API
+categories: API Code Laravel
 description: Building a RESTful API CRUD application in Laravel following best practices involves several key steps.
 thumbnail: https://laravel.com/img/logomark.min.svg
 ---
