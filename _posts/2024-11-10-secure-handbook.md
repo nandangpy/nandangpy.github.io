@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Secure Handbook"
-date: 2024-12-20 18:50:00 +0540
+date: 2024-12-15 18:50:00 +0540
 categories: Code Pentest Handbook
 description: A Secure Handbook is typically a comprehensive guide designed to provide information and best practices for ensuring security in specific contexts, such as cybersecurity, physical security, or organizational safety.
 thumbnail: https://www.hackthebox.com/images/landingv3/crisis-control-blog.svg
