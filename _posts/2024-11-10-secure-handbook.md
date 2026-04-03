@@ -503,19 +503,84 @@ It is common knowledge that DTDs are legacy technology, thus allowing for **inli
 
 ## Clickjacking
 
-Step carefully to install the Laravel application using Composer.
+### 1. Introduction
 
-```sh
-    php artisan make:model Product -a
-```
+**Clickjacking** is an **interface-based attack** in which a user is tricked into **clicking on overlayed actionable content** on a hidden website by clicking on some **content in a decoy website**.
+
+Consider the following example: A web user **accesses a decoy website** and **clicks on a button to accept the cookie policy**. Unknowingly, this **decoy** website is overlayed with a button, that would, for example, remove their 2-factor authenticator, from the **vulnerable** website. This attack differs from a CSRF attack in that the user is required to **perform** an action **such as a button click** whereas a **CSRF attack depends upon forging an entire request** **without the user's knowledge or input whatsoever**.
+
+> ✅ Read more about **Clickjacking**, from an [attacker's perspective](https://portswigger.net/web-security/clickjacking).
+
+### 2. Defensive Techniques
+
+There are **no** effective ways of defending against clickjacking on the **client side**. With this in mind, we have to **properly setup the server side** so that our website will NEVER be a "**bait**" for such attacks.
+
+### 2.1. Implementing X-Frame-Options or CSP (frame-ancestors)
+
+The `X-Frame-Options` HTTP response header can be used to indicate whether or not a browser should be allowed to render a page in a `<frame>` or `<iframe>`. Sites can use this to avoid Clickjacking attacks, by ensuring that their content is not embedded into other sites. **Set** the **X-Frame-Options header for all responses containing HTML content**. Here are the possible **option** values:
+
+- **DENY:** prevents any domain from framing the content. The "DENY" setting is recommended unless a specific need has been identified for framing.
+- **SAMEORIGIN:** which only allows the current site to frame the content.
+- **ALLOW-FROM URI:** which permits the specified '**URI**' to frame this page.
+
+### 2.2. Using a Content Security Policy (CSP)
+
+Content Security Policy (CSP) is a detection and prevention mechanism that provides mitigation against [**attacks such as XSS**](https://vladtoie.gitbook.io/secure-coding/client-side/xss#2-1-2-implementing-a-content-security-policy-csp) and **clickjacking**. CSP is usually implemented in the web server as a header of the form: **`Content-Security-Policy: policy`** where policy is a string of policy directives separated by semicolons. The CSP provides the client browser with information **about permitted sources of web resources** that the **browser can apply to the detection** and **interception** of malicious behaviors.
+
+The recommended **clickjacking** protection is to incorporate the **`frame-ancestors`** directive in the application's Content Security Policy. The **`frame-ancestors 'none'`** directive is similar in behavior to the X-Frame-Options **`deny`** directive. The **`frame-ancestors 'self'`** directive is broadly equivalent to the X-Frame-Options **`sameorigin`** directive, in the sense that they are pointing to the `self` domain. The following CSP whitelists frames to the same domain only: **`Content-Security-Policy: frame-ancestors 'self';`**
+
+Alternatively, framing can be restricted to named sites/domains: **`Content-Security-Policy: frame-ancestors normal-website.com;`**
+
+### 3. Takeaways
+
+Both `X-Frame-Options` and `Content-Security-Policy` response headers define whether or not a browser should be allowed to embed or render a page in an `<iframe>` element. As this topic is more related to server-side configuration rather than vulnerable code itself, here is a link to a [more "interactive" resource](https://application.security/free-application-security-training/owasp-top-10-clickjacking) where you can find how Clickjacking usually behaves.
+
+> ℹ️ You can find more details about this topic here:
+> - [Clickjacking Defense [OWASP]](https://cheatsheetseries.owasp.org/cheatsheets/Clickjacking_Defense_Cheat_Sheet.html#defending-with-content-security-policy-csp-frame-ancestors-directive)
+> - [Clickjacking | Kontra exercise](https://application.security/free-application-security-training/owasp-top-10-clickjacking)
+> - [What is clickjacking?](https://portswigger.net/web-security/clickjacking)
 
 ## Vulnerable Dependency Management
 
-Install the Laravel application using Composer.
+### 1. Introduction
 
-```sh
-    php artisan make:controller Product -r
-```
+**Development teams rarely perform code reviews on third-party dependencies,** but the libraries and tool kits we use are often a source of software vulnerabilities. As a developer, you need to ensure code written by **other** people is not making **your system** insecure.
+
+### 2. Protection
+
+Being mindful when using dependencies on your projects and software in general is key to keeping your system secure. With this in mind, when working with "third-party code" every developer should follow the following points:
+
+- **Automate the build and deployment processes.** You need to make sure you actually **KNOW what code is running and when;** This means declaring all third-party libraries within build scripts or dependency management systems/ building and deploying from source control and even keeping records of deployment logs.
+- **Never trust private dependencies.** Be careful how you configure the precedence of repositories in your build process, since [dependency confusion](https://medium.com/@alex.birsan/dependency-confusion-4a5d60fec610) attacks - where an attacker uploads a **malicious** copy of a **private dependency to a public repository** - have caused a **lot of trouble worldwide**.
+- **Deploy known-good versions of software.** Dependency management tools often allow you to leave the version of each dependency indeterminate, which is shorthand for **"grab the latest available version at build time."** Try to avoid this - upgrade versions deliberately, when you have had chance to review the release notes, and pin the dependency versions in your code.
+- **Use dedicated tools to scan your dependency tree for security risks.** Most programming languages and utilities are able to spot compromised dependencies. Consider using one or more of the following:
+  - [Github security alerts](https://help.github.com/en/github/managing-security-vulnerabilities/about-alerts-for-vulnerable-dependencies).
+  - [GitLab security scanning](https://docs.gitlab.com/ee/development/integrations/secure.html).
+  - [`npm audit`](https://docs.npmjs.com/auditing-package-dependencies-for-security-vulnerabilities) and [`retire.js`](https://retirejs.github.io/retire.js/) for Node.
+  - [`bundler audit`](https://github.com/rubysec/bundler-audit) for Ruby.
+- **Keep on top of security bulletins.** Make sure your team is on the lookout for security announcements for the software you use. This can mean signing up for mailing lists, joining forums, or following library developers on social media. The development community is often the first become aware of security issues.
+- **Make penetration testing and code reviews part of your development lifecycle.** Penetration testing tools will attempt to take advantage of known exploits, checking whether your technology stack contains vulnerable components. Code reviews, on the other hand, allow for a constant reminder of what the specific code is supposed to do and how it does that (eg. what dependencies it uses and so on).
+- **Using dependency management tools.** Since they simplify a lot of the developer's job, you should consider using one of them. Most dominant programming languages have their own dependency management tools, such as:
+  - [Bundler](http://bundler.io/) for Ruby Gems.
+  - [Pip](https://packaging.python.org/installing/#use-pip-for-installing) for Python Packages.
+  - [NPM](https://docs.npmjs.com/) for Node Modules.
+  - [Maven](https://maven.apache.org/what-is-maven.html) and [Gradle](https://docs.gradle.org/current/userguide/tutorial_java_projects.html) for Java jars.
+  - [NuGet](https://www.nuget.org/) for .NET.
+  - [Composer](https://getcomposer.org/) for PHP.
+
+### 3. Takeaways
+
+To sum up, **component-based vulnerabilities** occur when a web application component is unsupported, out of date, or vulnerable to a known exploit.
+
+To effectively mitigate against **component-based vulnerabilities**, developers must regularly audit software components and their dependencies, making sure the third-party libraries and software dependencies are always up-to-date.
+
+Product teams must further establish security policies governing the use of third-party libraries, such as passing security tests, and regular patching and updating of application dependencies.
+
+> ℹ️ You can find more details about this topic here:
+> - [Components with known vulnerabilities.](https://application.security/free-application-security-training/owasp-top-10-components-with-known-vulnerabilities)
+> - [Vulnerable Dependency Management Cheat](https://cheatsheetseries.owasp.org/cheatsheets/Vulnerable_Dependency_Management_Cheat_Sheet.html).
+> - [Securing Your Dependencies.](https://www.hacksplaining.com/prevention/toxic-dependencies)
+> - [Dependency Confusion.](https://medium.com/@alex.birsan/dependency-confusion-4a5d60fec610)
 
 ## Cross-Site Request Forgery (CSRF)
 
