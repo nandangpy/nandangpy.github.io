@@ -11,13 +11,13 @@ Welcome to the Secure Coding Handbook! Here, you will find everything that I h
 
 # Table of Contents:
 
-- <a href="#sql-injections-(SQLi)">SQL Injections (SQLi)</a>
-- <a href="#xml-external-entity-injections-(XXE)">XML External Entity Injections (XXE)</a>
-- <a href="#clickjacking">Clickjacking</a>
-- <a href="#vulerable-dependency-management">Vulerable Dependency Management</a>
-- <a href="#cross-site-request-forgery-(CSRF)">Cross-Site Request Forgery (CSRF)</a>
+- [SQL Injections (SQLi)](#sql-injections-sqli)
+- [XML External Entity Injections (XXE)](#xml-external-entity-injections-xxe)
+- [Clickjacking](#clickjacking)
+- [Vulnerable Dependency Management](#vulnerable-dependency-management)
+- [Cross-Site Request Forgery (CSRF)](#cross-site-request-forgery-csrf)
 
-## [](#header-2)SQL Injections (SQLi)
+## SQL Injections (SQLi)
 
 ### 1. Introduction
 
@@ -337,7 +337,7 @@ def authenticate(request):
 4. **Avoid dynamic queries** — Never concatenate user input directly into SQL strings.
 5. **Keep dependencies updated** — Ensure your database drivers and ORM libraries are up to date with the latest security patches.
 
-## [](#header-2)XML External Entity Injections (XXE)
+## XML External Entity Injections (XXE)
 
 ### 1. Introduction
 
@@ -501,7 +501,7 @@ It is common knowledge that DTDs are legacy technology, thus allowing for **inli
 > - [XML External Entity Prevention Cheatsheet [OWASP]](https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html)
 > - [What is XXE?](https://portswigger.net/web-security/xxe)
 
-## [](#header-2)Clickjacking
+## Clickjacking
 
 Step carefully to install the Laravel application using Composer.
 
@@ -509,7 +509,7 @@ Step carefully to install the Laravel application using Composer.
     php artisan make:model Product -a
 ```
 
-## [](#header-2)Vulerable Dependency Management
+## Vulnerable Dependency Management
 
 Install the Laravel application using Composer.
 
@@ -517,7 +517,7 @@ Install the Laravel application using Composer.
     php artisan make:controller Product -r
 ```
 
-## [](#header-2)Cross-Site Request Forgery (CSRF)
+## Cross-Site Request Forgery (CSRF)
 
 ### 1. Introduction
 
