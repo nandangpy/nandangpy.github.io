@@ -1,15 +1,15 @@
-title: nandanG~Sec
-author: nandang
+title: Nandang Prayogi - Web Security & Back End Developer
+author: Nandang Prayogi
 email: contact.nandang@gmail.com
 description: > # this means to ignore newlines until "show_exerpts:"
- Web Security, Penetration testing, Hacking & CTF.
+ Personal blog and portfolio of Nandang Prayogi. Articles on Web Security, Penetration Testing, Hacking & CTF.
 show_excerpts: true
 
 sass:
   sass_dir: _sass
 permalink: /:year/:month/:day/:title 
 plainwhite:
-  name: nandang
+  name: Nandang Prayogi
   tagline: Web Developer | Security Engineer
   date_format: "%b %-d, %Y"
   sitemap: true # set to true to generate sitemap.xml content
@@ -43,6 +43,8 @@ plainwhite:
 plugins:
   - jekyll-seo-tag
   - jekyll-feed
+  - jekyll-sitemap
 domain: nandangpy.github.io       # if you want to force HTTPS, specify the domain without the http at the start, e.g. example.com
 url: https://nandangpy.github.io  # the base hostname and protocol for your site, e.g. http://example.com
 # baseurl: /nandangpy.github.io/
+

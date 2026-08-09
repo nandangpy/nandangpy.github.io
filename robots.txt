@@ -1,2 +1,5 @@
 User-agent: *
 Disallow: /wani.html
+
+Sitemap: https://nandangpy.github.io/sitemap.xml
+
